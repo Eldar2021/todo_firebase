@@ -26,6 +26,16 @@ class _MyHomePageState extends State<MyHomePage> {
     return db.collection('todos').snapshots();
   }
 
+  Future<void> updateTodo(Todo todo) async {
+    final db = FirebaseFirestore.instance;
+    await db.collection('todos').doc(todo.id).update({'isCompleted': !todo.isCompleted});
+  }
+
+  Future<void> deleteTodo(Todo todo) async {
+    final db = FirebaseFirestore.instance;
+    await db.collection('todos').doc(todo.id).delete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,8 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
           } else if (snapshot.hasError) {
             return Center(child: Text(snapshot.error!.toString()));
           } else if (snapshot.hasData) {
-            final List<Todo> todos =
-                snapshot.data!.docs.map((e) => Todo.fromMap(e.data() as Map<String, dynamic>)).toList();
+            final List<Todo> todos = snapshot.data!.docs
+                .map(
+                  (d) => Todo.fromMap(d.data() as Map<String, dynamic>)..id = d.id,
+                )
+                .toList();
             return ListView.builder(
               itemCount: todos.length,
               itemBuilder: (BuildContext context, int index) {
@@ -49,9 +62,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 return Card(
                   child: ListTile(
                     title: Text(todo.title),
-                    trailing: Checkbox(
-                      value: todo.isCompleted,
-                      onChanged: (v) {},
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Checkbox(
+                          value: todo.isCompleted,
+                          onChanged: (v) async {
+                            await updateTodo(todo);
+                          },
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            await deleteTodo(todo);
+                          },
+                          icon: const Icon(Icons.delete),
+                        ),
+                      ],
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -15,6 +15,10 @@ import 'firebase_options.dart';
 // read data
 // add data
 
+// CRUD: create, read, update, delete
+
+// flash chat, bloc, context try catch, stream,
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
