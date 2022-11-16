@@ -14,6 +14,8 @@ import 'firebase_options.dart';
 // https://firebase.google.com/docs/firestore/quickstart?authuser=0&hl=en
 // read data
 // add data
+// update data
+// delete data
 
 // CRUD: create, read, update, delete
 
